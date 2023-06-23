@@ -6,7 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+
 
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
@@ -79,12 +79,5 @@ public class MainController {
 
         return "dashboard";
     }
-//    @GetMapping("/save")
-//    public String saveCredential(){
-//        Credential cr=new Credential();
-//        cr.setUsername("Jas");
-//        cr.setPassword("jas@123");
-//        credentialRepository.save(cr);
-//        return "New Credential Saved";
-//    }
+
 }
