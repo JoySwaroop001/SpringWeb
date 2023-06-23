@@ -1,4 +1,6 @@
 package com.example.springweb;
 
-public interface CredentialRepository extends org.springframework.data.jpa.repository.JpaRepository<com.example.springweb.Credential, java.lang.String> {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CredentialRepository extends JpaRepository<Credential, String> {
 }
