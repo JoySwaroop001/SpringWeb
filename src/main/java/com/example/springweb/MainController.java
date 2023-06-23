@@ -6,9 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -20,6 +19,9 @@ public class MainController {
 
     @Autowired
     UserdetailRepository userdetailRepository;
+
+    @Autowired
+    UsertypelinkRepository usertypelinkRepository;
 
 
     @GetMapping("/")
@@ -35,31 +37,43 @@ public class MainController {
         credential.setUsername(username);
         credential.setPassword(password);
         credentialRepository.save(credential);
-        return "signup";
+        return "interdashboard";
     }
 
-
     @PostMapping("/login")
-    public String login(@RequestParam("username") String username, @RequestParam("password") String password, HttpSession session, Model model)
-    {
-        Optional<Credential> matchedCredential = credentialRepository.findById(username);
-                if(matchedCredential.isPresent()) {
-                    if (matchedCredential.get().getPassword().equals(password)) {
-                        session.setAttribute("username", username);
-                        Optional<Userdetail> userdetail=userdetailRepository.findById((username));
-                        if(userdetail.isPresent())
-                        {
-                            model.addAttribute("userdetail",userdetail.get());
+    public String login(@RequestParam("username") String username, @RequestParam("password") String password, HttpSession session, Model model){
+
+        Optional<Credential> credValue=credentialRepository.findById(username);
+
+        if(credValue.isPresent()){
+            if(credValue.get().getPassword().equals(password)){
+                session.setAttribute("username",username);
+                Optional<Userdetail> userdetail=userdetailRepository.findById(username);
+
+                List<Usertypelink> usertypelinks= usertypelinkRepository.findAll();
+                Optional<Usertypelink> usertypelink=usertypelinks.stream().filter(usertypelink1
+                        ->usertypelink1.getUsername().equals(username)).findAny();
+
+                if(userdetail.isPresent()) {
+
+                    model.addAttribute("userdetail", userdetail.get());
+                    if (usertypelink.isPresent()) {
+                        if (usertypelink.get().getType().equals("BUYER")) {
+                            return "buyerdashboard";
+                        } else if (usertypelink.get().getType().equals("SELLER")) {
+                            return "sellerdashboard";
+                        } else {
+                            return "interdashboard";
                         }
-
-
-                        return "dashboard";
                     } else {
-                        return "landingpage";
+                        return "interdashboard";
                     }
                 }
-                else {
-                    return "landingpage";}
+                else return "interdashboard";
+            }
+            else return "landingpage";
+        }
+        else return "landingpage";
 
     }
 
@@ -77,7 +91,7 @@ public class MainController {
 
         userdetailRepository.save(userdetail);
 
-        return "dashboard";
+        return "landingpage";
     }
 
 }
